@@ -1,0 +1,137 @@
+import { Provider, ServiceCategory, ServiceRequest } from './types';
+
+export const serviceCategories: ServiceCategory[] = [
+  {
+    id: 'plumbing',
+    label: 'Plumbing',
+    icon: '🚰',
+    description: 'Leaks, blocked drains, burst pipes, geysers, and urgent water issues.',
+    startingPrice: 450,
+  },
+  {
+    id: 'electrical',
+    label: 'Electrical',
+    icon: '💡',
+    description: 'Power faults, trips, installations, and emergency electrical repairs.',
+    startingPrice: 500,
+  },
+  {
+    id: 'locksmith',
+    label: 'Locksmith',
+    icon: '🔐',
+    description: 'Lockouts, key replacements, and broken lock repairs.',
+    startingPrice: 420,
+  },
+  {
+    id: 'mechanic',
+    label: 'Mechanic',
+    icon: '🛠️',
+    description: 'Breakdowns, diagnostics, flat batteries, and urgent mechanical help.',
+    startingPrice: 650,
+  },
+  {
+    id: 'cleaning',
+    label: 'Cleaning',
+    icon: '🧼',
+    description: 'Home, office, and move-in/move-out cleaning support.',
+    startingPrice: 320,
+  },
+  {
+    id: 'gardening',
+    label: 'Gardening',
+    icon: '🌿',
+    description: 'Lawn care, trimming, cleanup, and outdoor maintenance.',
+    startingPrice: 300,
+  },
+];
+
+export const initialProviders: Provider[] = [
+  {
+    id: 'prov-1',
+    name: 'Nomsa D.',
+    title: 'Emergency Plumber',
+    rating: 4.9,
+    jobsCompleted: 184,
+    distanceKm: 2.4,
+    etaMinutes: 18,
+    categories: ['plumbing'],
+    availability: 'available',
+    earnings: 12850,
+    bio: 'Fast leak response, pipe repairs, and appliance connections.',
+  },
+  {
+    id: 'prov-2',
+    name: 'Chris M.',
+    title: 'Mobile Electrician',
+    rating: 4.8,
+    jobsCompleted: 143,
+    distanceKm: 3.1,
+    etaMinutes: 22,
+    categories: ['electrical'],
+    availability: 'available',
+    earnings: 17320,
+    bio: 'Fault finding, urgent trips, and after-hours electrical work.',
+  },
+  {
+    id: 'prov-3',
+    name: 'Lebo K.',
+    title: 'Roadside Mechanic',
+    rating: 4.7,
+    jobsCompleted: 201,
+    distanceKm: 5.6,
+    etaMinutes: 27,
+    categories: ['mechanic', 'locksmith'],
+    availability: 'busy',
+    earnings: 20940,
+    bio: 'Breakdowns, battery swaps, lockouts, and towing coordination.',
+  },
+  {
+    id: 'prov-4',
+    name: 'Sindi P.',
+    title: 'Cleaning & Home Care',
+    rating: 4.9,
+    jobsCompleted: 128,
+    distanceKm: 4.2,
+    etaMinutes: 35,
+    categories: ['cleaning', 'gardening'],
+    availability: 'available',
+    earnings: 9480,
+    bio: 'Reliable home cleaning, garden tidy-ups, and recurring visits.',
+  },
+];
+
+const now = new Date();
+const inThirtyMinutes = new Date(now.getTime() + 30 * 60 * 1000).toISOString();
+const tomorrowMorning = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString();
+
+export const initialRequests: ServiceRequest[] = [
+  {
+    id: 'req-1001',
+    customerName: 'Aisha',
+    categoryId: 'plumbing',
+    scheduleType: 'now',
+    location: 'Rosebank, 14 Baker Street',
+    details: 'Kitchen sink is overflowing and water will not drain.',
+    status: 'pending',
+    priceEstimate: 'From R450',
+    payoutAmount: 450,
+    declinedProviderIds: [],
+    createdAt: inThirtyMinutes,
+    timeline: [{ label: 'Help request sent to nearby providers', timestamp: inThirtyMinutes }],
+  },
+  {
+    id: 'req-1002',
+    customerName: 'Michael',
+    categoryId: 'cleaning',
+    scheduleType: 'later',
+    scheduledFor: tomorrowMorning,
+    location: 'Sandton, 88 Rivonia Road',
+    details: 'Need a move-out clean for a two-bedroom apartment.',
+    status: 'pending',
+    priceEstimate: 'From R320',
+    payoutAmount: 320,
+    declinedProviderIds: [],
+    createdAt: now.toISOString(),
+    timeline: [{ label: 'Booking request shared with nearby providers', timestamp: now.toISOString() }],
+  },
+];
