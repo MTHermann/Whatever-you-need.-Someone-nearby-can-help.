@@ -1,42 +1,89 @@
 # Whatever-you-need.-Someone-nearby-can-help.
 
-The platform is an all-in-one, location-based marketplace that connects customers with trusted, verified service professionals nearby.
+A working cross-platform marketplace prototype for location-based, on-demand services.
 
-## How it works
+## What is implemented
 
-Customers open the app, choose the service they need, share their location, compare nearby professionals, and request help directly through the platform. Before booking, they can review estimated prices, ratings, arrival times, provider qualifications, completed jobs, and customer reviews.
+The repository now includes a shared Expo + React Native TypeScript app in `/app` that runs on:
 
-For urgent requests, customers can choose **Help Now**. The platform identifies suitable available providers nearby, sends out the request, and lets the customer track the accepted provider in real time with GPS updates, in-app messaging, and live job status notifications until the service is complete.
+- iOS
+- Android
+- Web
 
-For planned work, customers can choose **Book for Later**. They can select a preferred date and time and receive quotations from suitable professionals for non-emergency jobs.
+The implementation keeps one shared UI/data model for both the mobile app and the web experience.
 
-## Services available
+### Customer experience
 
-The marketplace brings multiple everyday and emergency services together in one app, including:
+- landing page describing the platform
+- choose a service category
+- provide a location
+- browse nearby providers
+- request **Help Now**
+- **Book for Later**
+- track request status from pending to completion
 
-- plumbers
-- electricians
-- locksmiths
-- mechanics
-- towing and roadside assistance
-- tyre and battery services
-- appliance repair
-- handyman services
-- cleaning
-- gardening
-- moving
-- other home and emergency services
+### Provider experience
 
-## Trust, transparency, and payments
+- switch into a provider workspace
+- view incoming matching requests
+- accept or decline jobs
+- update job status from accepted → on the way/on job → completed
+- manage availability
+- view earnings and completed work totals
 
-Service providers go through identity and professional verification before joining the marketplace. Secure in-app payments support cards, instant EFT, and other digital payment methods. Customers receive digital invoices and service records, while providers receive payouts through their platform accounts.
+### Data model
 
-## Value for customers and providers
+- shared mock marketplace data for customers, providers, and service requests
+- local in-memory state for an initial product prototype
+- seeded providers and seeded incoming jobs so both customer and provider workflows can be demoed immediately
 
-The app is built to help customers move from “I have a problem” to “help is on the way” within minutes, whether they are dealing with a leaking pipe, electrical fault, locked door, flat tyre, or a stranded vehicle.
+## Project structure
 
-For providers, the platform offers access to nearby customers, digital job management, navigation, customer communication, payments, earnings tracking, and business growth opportunities.
+```text
+README.md
+app/
+  App.tsx              # shared customer/provider experience
+  src/
+    mockData.ts        # seeded providers, categories, and requests
+    types.ts           # shared marketplace data model
+```
 
-## Vision
+## Running the app
 
-The long-term vision is to become a single trusted platform for everyday and emergency services, connecting people who need help with qualified professionals who are ready to provide it.
+From the repository root:
+
+```bash
+cd /home/runner/work/Whatever-you-need.-Someone-nearby-can-help./Whatever-you-need.-Someone-nearby-can-help./app
+npm install
+npm run start
+```
+
+### Run the web version
+
+```bash
+npm run web
+```
+
+### Run the mobile version
+
+```bash
+npm run android
+# or
+npm run ios
+```
+
+## Validation used for this implementation
+
+The shared app was validated with:
+
+```bash
+cd /home/runner/work/Whatever-you-need.-Someone-nearby-can-help./Whatever-you-need.-Someone-nearby-can-help./app
+npx tsc --noEmit
+CI=1 npx expo export --platform web
+```
+
+## Notes
+
+- This initial implementation uses mock/local state instead of a backend.
+- The web build and the mobile app share the same React Native/Expo codebase.
+- The product concept from the original README is preserved and expanded into a working prototype.
