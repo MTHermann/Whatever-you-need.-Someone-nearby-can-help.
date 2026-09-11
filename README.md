@@ -1,42 +1,93 @@
-# Whatever-you-need.-Someone-nearby-can-help.
+# Whatever You Need
 
-The platform is an all-in-one, location-based marketplace that connects customers with trusted, verified service professionals nearby.
+Whatever You Need is a responsive on-demand services platform for customers and providers. It is implemented as a React + Vite application that works as a web app and mobile-friendly installable experience through the browser.
 
-## How it works
+## Features
 
-Customers open the app, choose the service they need, share their location, compare nearby professionals, and request help directly through the platform. Before booking, they can review estimated prices, ratings, arrival times, provider qualifications, completed jobs, and customer reviews.
+### Customer experience
 
-For urgent requests, customers can choose **Help Now**. The platform identifies suitable available providers nearby, sends out the request, and lets the customer track the accepted provider in real time with GPS updates, in-app messaging, and live job status notifications until the service is complete.
+- landing page with the platform overview
+- choose a service category
+- provide a location
+- view nearby providers
+- request **Help Now**
+- schedule **Book for Later**
+- track request status locally in the app
 
-For planned work, customers can choose **Book for Later**. They can select a preferred date and time and receive quotations from suitable professionals for non-emergency jobs.
+### Provider experience
 
-## Services available
+- register under any supported category
+- switch between provider profiles
+- review incoming service requests
+- accept or decline pending work
+- update job progress from accepted to in-progress to completed
+- view availability, open jobs, completed jobs, and estimated earnings
 
-The marketplace brings multiple everyday and emergency services together in one app, including:
+### Supported service categories
 
 - plumbers
 - electricians
-- locksmiths
-- mechanics
-- towing and roadside assistance
-- tyre and battery services
-- appliance repair
-- handyman services
 - cleaning
 - gardening
-- moving
-- other home and emergency services
+- household/care services
+- roadside assistance
+- jump starts
+- batteries
+- tyre changes
+- towing
+- locksmith services
 
-## Trust, transparency, and payments
+## Tech stack
 
-Service providers go through identity and professional verification before joining the marketplace. Secure in-app payments support cards, instant EFT, and other digital payment methods. Customers receive digital invoices and service records, while providers receive payouts through their platform accounts.
+- React 19
+- TypeScript
+- Vite
+- Vitest
 
-## Value for customers and providers
+The app uses mocked provider data plus `localStorage` persistence so the flows are demonstrable now while keeping the code easy to connect to a backend later.
 
-The app is built to help customers move from “I have a problem” to “help is on the way” within minutes, whether they are dealing with a leaking pipe, electrical fault, locked door, flat tyre, or a stranded vehicle.
+## Run locally
 
-For providers, the platform offers access to nearby customers, digital job management, navigation, customer communication, payments, earnings tracking, and business growth opportunities.
+From the repository root:
 
-## Vision
+```bash
+npm install
+npm run dev
+```
 
-The long-term vision is to become a single trusted platform for everyday and emergency services, connecting people who need help with qualified professionals who are ready to provide it.
+Then open the local Vite URL in your browser.
+
+## Run tests
+
+```bash
+npm test
+```
+
+## Build the web/downloadable version
+
+```bash
+npm run build
+```
+
+The production-ready web bundle is generated in `dist/`. You can preview it locally with:
+
+```bash
+npm run preview
+```
+
+Because the app includes a web manifest and responsive layout, it can also be installed from a modern mobile browser as an app-like experience.
+
+## Project structure
+
+```text
+src/
+  App.tsx              # customer + provider UI
+  lib/platform.ts      # service categories, mocked data, request helpers
+  lib/platform.test.ts # core flow tests
+```
+
+## Notes
+
+- No backend is required for the initial preview.
+- Requests and provider registrations persist in the browser only.
+- The architecture is intentionally simple so a future API layer can replace the local state and helper module cleanly.
