@@ -1,0 +1,16 @@
+{
+  "name": "Whatever You Need",
+  "short_name": "WYN",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#0f172a",
+  "description": "Responsive local services marketplace for customers and providers.",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

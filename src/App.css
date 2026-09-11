@@ -1,0 +1,284 @@
+.app-shell {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 24px;
+}
+
+.hero-panel,
+.card {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.2);
+}
+
+.hero-panel {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 2fr 1fr;
+  margin-bottom: 20px;
+  padding: 32px;
+}
+
+.eyebrow {
+  color: #38bdf8;
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.hero-panel h1,
+.card h2,
+.provider-card h3,
+.request-card h3 {
+  margin: 0;
+}
+
+.hero-copy {
+  color: #cbd5e1;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  max-width: 60ch;
+}
+
+.hero-actions,
+.card-actions,
+.mode-switch,
+.summary-grid,
+.provider-grid,
+.content-grid,
+.hero-stats,
+.section-heading {
+  display: grid;
+  gap: 16px;
+}
+
+.hero-actions {
+  grid-template-columns: repeat(2, minmax(0, max-content));
+  margin-top: 24px;
+}
+
+.hero-stats {
+  align-content: start;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.hero-stats article,
+.summary-grid article {
+  background: rgba(30, 41, 59, 0.85);
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.hero-stats strong,
+.summary-grid strong {
+  display: block;
+  font-size: 1.8rem;
+  margin-bottom: 6px;
+}
+
+.mode-switch {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 20px;
+}
+
+.mode-switch button.active {
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+}
+
+.content-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.landing-card,
+.request-list,
+.provider-grid {
+  grid-column: 1 / -1;
+}
+
+.card {
+  padding: 24px;
+}
+
+.stack,
+.request-list {
+  display: grid;
+  gap: 16px;
+}
+
+.category-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.category-pills span,
+.badge,
+.status {
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 8px 12px;
+}
+
+.category-pills span {
+  background: rgba(14, 165, 233, 0.15);
+  color: #bae6fd;
+}
+
+.badge {
+  background: rgba(34, 197, 94, 0.15);
+  color: #86efac;
+}
+
+.status {
+  background: rgba(148, 163, 184, 0.18);
+  color: #e2e8f0;
+  text-transform: capitalize;
+}
+
+.status--accepted,
+.status--completed {
+  background: rgba(34, 197, 94, 0.18);
+  color: #86efac;
+}
+
+.status--declined {
+  background: rgba(248, 113, 113, 0.15);
+  color: #fca5a5;
+}
+
+.status--in-progress {
+  background: rgba(250, 204, 21, 0.15);
+  color: #fde68a;
+}
+
+.provider-grid,
+.summary-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.provider-card,
+.request-card {
+  background: rgba(30, 41, 59, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.provider-card__header,
+.request-card__header {
+  align-items: start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.provider-card dl {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0 0 16px;
+}
+
+.provider-card dt,
+.summary-grid span,
+.compact-label,
+.request-card small {
+  color: #94a3b8;
+}
+
+.provider-card dd {
+  font-weight: 700;
+  margin: 6px 0 0;
+}
+
+.section-heading {
+  align-items: end;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 16px;
+}
+
+.compact-label {
+  display: grid;
+  gap: 8px;
+}
+
+label {
+  color: #e2e8f0;
+  display: grid;
+  font-weight: 600;
+  gap: 8px;
+}
+
+input,
+select,
+button {
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 14px;
+  font: inherit;
+  min-height: 48px;
+  padding: 0 14px;
+}
+
+input,
+select {
+  background: rgba(15, 23, 42, 0.82);
+  color: #f8fafc;
+}
+
+button {
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  color: #eff6ff;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+button.secondary {
+  background: transparent;
+}
+
+button:hover {
+  filter: brightness(1.05);
+}
+
+@media (max-width: 900px) {
+  .hero-panel,
+  .content-grid,
+  .section-heading {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    padding: 16px;
+  }
+
+  .hero-panel,
+  .card {
+    border-radius: 20px;
+    padding: 20px;
+  }
+
+  .provider-card dl,
+  .mode-switch,
+  .card-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .provider-card__header,
+  .request-card__header {
+    flex-direction: column;
+  }
+}
