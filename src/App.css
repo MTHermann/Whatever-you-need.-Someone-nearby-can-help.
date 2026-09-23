@@ -159,6 +159,11 @@
   color: #fca5a5;
 }
 
+.status--cancelled {
+  background: rgba(244, 114, 182, 0.15);
+  color: #f9a8d4;
+}
+
 .status--in-progress {
   background: rgba(250, 204, 21, 0.15);
   color: #fde68a;

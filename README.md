@@ -14,8 +14,9 @@ Whatever You Need is a responsive on-demand services platform for customers and 
 - request **Help Now**
 - schedule **Book for Later** with date and time slots
 - track request status locally in the app
+- cancel pending/accepted requests from the customer view
 - complete mocked payments for completed jobs
-- receive in-app notifications for request activity
+- receive and clear in-app notifications for request activity
 
 ### Provider experience
 
@@ -29,6 +30,7 @@ Whatever You Need is a responsive on-demand services platform for customers and 
 ### Admin experience
 
 - monitor total providers, request volume, open/completed jobs, and paid revenue
+- filter requests by status and update request progress from an admin queue
 - update provider availability from a basic admin control panel
 
 ### Supported service categories

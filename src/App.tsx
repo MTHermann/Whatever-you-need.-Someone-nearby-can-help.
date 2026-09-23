@@ -3,12 +3,14 @@ import './App.css'
 import {
   areas,
   bookingTimeSlots,
+  canCancelRequest,
   createRequest,
   createSeedProviders,
   defaultBookingSlot,
   findNearbyProviders,
   getProviderSummary,
   markRequestPaid,
+  openRequestStatuses,
   serviceCategories,
   storageKey,
   updateRequestStatus,
@@ -35,6 +37,23 @@ interface NotificationItem {
   id: string
   message: string
   createdAt: string
+}
+
+const loadStoredNotifications = () => {
+  if (typeof window === 'undefined') {
+    return [] as NotificationItem[]
+  }
+
+  const stored = window.localStorage.getItem(storageKey.notifications)
+  if (!stored) {
+    return [] as NotificationItem[]
+  }
+
+  try {
+    return JSON.parse(stored) as NotificationItem[]
+  } catch {
+    return [] as NotificationItem[]
+  }
 }
 
 const loadStoredProviders = () => {
@@ -115,7 +134,12 @@ function App() {
   const [loginName, setLoginName] = useState('')
   const [loginEmail, setLoginEmail] = useState('')
   const [loginRole, setLoginRole] = useState<ProfileRole>('customer')
-  const [notifications, setNotifications] = useState<NotificationItem[]>([])
+  const [notifications, setNotifications] = useState<NotificationItem[]>(
+    loadStoredNotifications,
+  )
+  const [adminRequestStatusFilter, setAdminRequestStatusFilter] = useState<
+    ServiceRequestStatus | 'all'
+  >('all')
   const [paymentMethodsByRequest, setPaymentMethodsByRequest] = useState<
     Record<string, PaymentMethod>
   >({})
@@ -136,6 +160,13 @@ function App() {
 
     window.localStorage.setItem(storageKey.profile, JSON.stringify(profile))
   }, [profile])
+
+  useEffect(() => {
+    window.localStorage.setItem(
+      storageKey.notifications,
+      JSON.stringify(notifications),
+    )
+  }, [notifications])
 
   const activeProviderId = selectedProviderId || providers[0]?.id || ''
 
@@ -195,13 +226,23 @@ function App() {
       totalProviders: providers.length,
       totalRequests: requests.length,
       openRequests: requests.filter((request) =>
-        ['pending', 'accepted', 'in-progress'].includes(request.status),
+        openRequestStatuses.includes(request.status),
       ).length,
       completedRequests: requests.filter((request) => request.status === 'completed')
         .length,
       paidRevenue: totalRevenue,
     }
   }, [providers.length, requests])
+
+  const adminFilteredRequests = useMemo(
+    () =>
+      requests.filter((request) =>
+        adminRequestStatusFilter === 'all'
+          ? true
+          : request.status === adminRequestStatusFilter,
+      ),
+    [adminRequestStatusFilter, requests],
+  )
 
   const addNotification = (message: string) => {
     setNotifications((current) => [
@@ -320,6 +361,10 @@ function App() {
     setProfile(null)
     setView('customer')
     addNotification(name ? `${name} signed out.` : 'Signed out.')
+  }
+
+  const clearNotifications = () => {
+    setNotifications([])
   }
 
   return (
@@ -652,6 +697,19 @@ function App() {
                           ? ` (${request.paymentMethod})`
                           : null}
                       </p>
+                      {canCancelRequest(request.status) ? (
+                        <div className="card-actions">
+                          <button
+                            type="button"
+                            className="secondary"
+                            onClick={() =>
+                              changeRequestStatus(request.id, 'cancelled')
+                            }
+                          >
+                            Cancel request
+                          </button>
+                        </div>
+                      ) : null}
                       {request.status === 'completed' &&
                       request.paymentStatus === 'unpaid' ? (
                         <div className="card-actions">
@@ -901,6 +959,114 @@ function App() {
             </section>
 
             <section className="card">
+              <div className="section-heading">
+                <div>
+                  <h2>Request management</h2>
+                  <p>Review and update request statuses across the platform.</p>
+                </div>
+                <label className="compact-label">
+                  Filter status
+                  <select
+                    value={adminRequestStatusFilter}
+                    onChange={(event) =>
+                      setAdminRequestStatusFilter(
+                        event.target.value as ServiceRequestStatus | 'all',
+                      )
+                    }
+                  >
+                    <option value="all">all</option>
+                    <option value="pending">pending</option>
+                    <option value="accepted">accepted</option>
+                    <option value="in-progress">in-progress</option>
+                    <option value="completed">completed</option>
+                    <option value="declined">declined</option>
+                    <option value="cancelled">cancelled</option>
+                  </select>
+                </label>
+              </div>
+              <div className="request-list">
+                {adminFilteredRequests.length === 0 ? (
+                  <p>No requests match this filter.</p>
+                ) : (
+                  adminFilteredRequests.map((request) => (
+                    <article key={request.id} className="request-card">
+                      <div className="request-card__header">
+                        <div>
+                          <h3>{request.category}</h3>
+                          <p>
+                            {request.providerName} • {request.location}
+                          </p>
+                        </div>
+                        <span className={`status status--${request.status}`}>
+                          {request.status}
+                        </span>
+                      </div>
+                      <p>
+                        {request.mode === 'help-now'
+                          ? 'Help Now'
+                          : `Booked for ${request.scheduledFor}`}
+                      </p>
+                      <div className="card-actions">
+                        {request.status === 'pending' ? (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                changeRequestStatus(request.id, 'accepted')
+                              }
+                            >
+                              Accept
+                            </button>
+                            <button
+                              type="button"
+                              className="secondary"
+                              onClick={() =>
+                                changeRequestStatus(request.id, 'declined')
+                              }
+                            >
+                              Decline
+                            </button>
+                          </>
+                        ) : null}
+                        {request.status === 'accepted' ? (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              changeRequestStatus(request.id, 'in-progress')
+                            }
+                          >
+                            Start
+                          </button>
+                        ) : null}
+                        {request.status === 'in-progress' ? (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              changeRequestStatus(request.id, 'completed')
+                            }
+                          >
+                            Complete
+                          </button>
+                        ) : null}
+                        {canCancelRequest(request.status) ? (
+                          <button
+                            type="button"
+                            className="secondary"
+                            onClick={() =>
+                              changeRequestStatus(request.id, 'cancelled')
+                            }
+                          >
+                            Cancel
+                          </button>
+                        ) : null}
+                      </div>
+                    </article>
+                  ))
+                )}
+              </div>
+            </section>
+
+            <section className="card">
               <h2>Provider controls</h2>
               <div className="request-list">
                 {providers.map((provider) => (
@@ -938,7 +1104,17 @@ function App() {
         ) : null}
 
         <section className="card landing-card">
-          <h2>Notifications</h2>
+          <div className="section-heading">
+            <div>
+              <h2>Notifications</h2>
+              <p>{notifications.length} total activity updates.</p>
+            </div>
+            {notifications.length > 0 ? (
+              <button type="button" className="secondary" onClick={clearNotifications}>
+                Clear all
+              </button>
+            ) : null}
+          </div>
           <div className="request-list">
             {notifications.length === 0 ? (
               <p>No notifications yet.</p>

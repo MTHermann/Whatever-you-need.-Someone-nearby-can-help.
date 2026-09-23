@@ -20,6 +20,7 @@ export type ServiceRequestStatus =
   | 'declined'
   | 'in-progress'
   | 'completed'
+  | 'cancelled'
 export type ProviderAvailability = 'available' | 'busy' | 'offline'
 export type PaymentStatus = 'unpaid' | 'paid'
 export type PaymentMethod = 'card' | 'cash' | 'wallet'
@@ -72,6 +73,7 @@ export const storageKey = {
   providers: 'wyn.providers',
   requests: 'wyn.requests',
   profile: 'wyn.profile',
+  notifications: 'wyn.notifications',
 }
 
 export const defaultBookingSlot = '2026-09-12T10:00'
@@ -311,6 +313,15 @@ export const updateRequestStatus = (
   status: ServiceRequestStatus,
 ) => (request.id === requestId ? { ...request, status } : request)
 
+export const openRequestStatuses: ServiceRequestStatus[] = [
+  'pending',
+  'accepted',
+  'in-progress',
+]
+
+export const canCancelRequest = (status: ServiceRequestStatus) =>
+  status === 'pending' || status === 'accepted'
+
 export const markRequestPaid = (
   request: ServiceRequest,
   requestId: string,
@@ -332,10 +343,7 @@ export const getProviderSummary = (
     (request) => request.status === 'completed',
   ).length
   const openJobs = requests.filter(
-    (request) =>
-      request.status === 'pending' ||
-      request.status === 'accepted' ||
-      request.status === 'in-progress',
+    (request) => openRequestStatuses.includes(request.status),
   ).length
   const earnings = requests
     .filter((request) => request.status === 'completed')

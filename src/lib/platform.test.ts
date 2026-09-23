@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import {
+  canCancelRequest,
   createRequest,
   createSeedProviders,
   findNearbyProviders,
   getProviderSummary,
   markRequestPaid,
+  openRequestStatuses,
   updateRequestStatus,
 } from './platform'
 
@@ -80,5 +82,16 @@ describe('platform helpers', () => {
     expect(summary.completedJobs).toBe(1)
     expect(summary.openJobs).toBe(1)
     expect(summary.earnings).toBe(completed.priceEstimate)
+  })
+
+  it('supports cancellation eligibility for pending and accepted requests', () => {
+    expect(canCancelRequest('pending')).toBe(true)
+    expect(canCancelRequest('accepted')).toBe(true)
+    expect(canCancelRequest('in-progress')).toBe(false)
+    expect(canCancelRequest('completed')).toBe(false)
+  })
+
+  it('does not treat cancelled requests as open jobs', () => {
+    expect(openRequestStatuses).not.toContain('cancelled')
   })
 })
