@@ -315,7 +315,7 @@ export const markRequestPaid = (
   request: ServiceRequest,
   requestId: string,
   paymentMethod: PaymentMethod,
-) =>
+): ServiceRequest =>
   request.id === requestId
     ? {
         ...request,
