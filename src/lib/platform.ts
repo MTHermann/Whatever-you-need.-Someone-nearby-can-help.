@@ -21,6 +21,8 @@ export type ServiceRequestStatus =
   | 'in-progress'
   | 'completed'
 export type ProviderAvailability = 'available' | 'busy' | 'offline'
+export type PaymentStatus = 'unpaid' | 'paid'
+export type PaymentMethod = 'card' | 'cash' | 'wallet'
 
 export interface Provider {
   id: string
@@ -30,6 +32,7 @@ export interface Provider {
   phone: string
   rating: number
   etaMinutes: number
+  distanceKm: number
   hourlyRate: number
   availability: ProviderAvailability
   completedJobs: number
@@ -45,7 +48,16 @@ export interface ServiceRequest {
   status: ServiceRequestStatus
   scheduledFor?: string
   priceEstimate: number
+  paymentStatus: PaymentStatus
+  paymentMethod?: PaymentMethod
   createdAt: string
+}
+
+export interface ProviderSearchOptions {
+  availability?: ProviderAvailability | 'any'
+  minRating?: number
+  maxDistanceKm?: number
+  sortBy?: 'eta' | 'nearest' | 'rating'
 }
 
 export const areas = [
@@ -59,9 +71,19 @@ export const areas = [
 export const storageKey = {
   providers: 'wyn.providers',
   requests: 'wyn.requests',
+  profile: 'wyn.profile',
 }
 
 export const defaultBookingSlot = '2026-09-12T10:00'
+
+export const bookingTimeSlots = [
+  '08:00',
+  '10:00',
+  '12:00',
+  '14:00',
+  '16:00',
+  '18:00',
+] as const
 
 const seedProviderData: Array<
   Omit<Provider, 'id'> & { category: ServiceCategory }
@@ -73,6 +95,7 @@ const seedProviderData: Array<
     phone: '+27 82 111 0001',
     rating: 4.9,
     etaMinutes: 18,
+    distanceKm: 1.2,
     hourlyRate: 450,
     availability: 'available',
     completedJobs: 128,
@@ -84,6 +107,7 @@ const seedProviderData: Array<
     phone: '+27 82 111 0002',
     rating: 4.8,
     etaMinutes: 22,
+    distanceKm: 4.8,
     hourlyRate: 520,
     availability: 'available',
     completedJobs: 96,
@@ -95,6 +119,7 @@ const seedProviderData: Array<
     phone: '+27 82 111 0003',
     rating: 4.7,
     etaMinutes: 35,
+    distanceKm: 6.7,
     hourlyRate: 310,
     availability: 'busy',
     completedJobs: 204,
@@ -106,6 +131,7 @@ const seedProviderData: Array<
     phone: '+27 82 111 0004',
     rating: 4.6,
     etaMinutes: 40,
+    distanceKm: 7.5,
     hourlyRate: 290,
     availability: 'available',
     completedJobs: 82,
@@ -117,6 +143,7 @@ const seedProviderData: Array<
     phone: '+27 82 111 0005',
     rating: 4.9,
     etaMinutes: 28,
+    distanceKm: 3.4,
     hourlyRate: 360,
     availability: 'available',
     completedJobs: 117,
@@ -128,6 +155,7 @@ const seedProviderData: Array<
     phone: '+27 82 111 0006',
     rating: 4.8,
     etaMinutes: 14,
+    distanceKm: 0.9,
     hourlyRate: 550,
     availability: 'available',
     completedJobs: 144,
@@ -139,6 +167,7 @@ const seedProviderData: Array<
     phone: '+27 82 111 0007',
     rating: 4.7,
     etaMinutes: 16,
+    distanceKm: 2.3,
     hourlyRate: 300,
     availability: 'available',
     completedJobs: 61,
@@ -150,6 +179,7 @@ const seedProviderData: Array<
     phone: '+27 82 111 0008',
     rating: 4.8,
     etaMinutes: 20,
+    distanceKm: 2.8,
     hourlyRate: 480,
     availability: 'busy',
     completedJobs: 89,
@@ -161,6 +191,7 @@ const seedProviderData: Array<
     phone: '+27 82 111 0009',
     rating: 4.9,
     etaMinutes: 19,
+    distanceKm: 2.1,
     hourlyRate: 420,
     availability: 'available',
     completedJobs: 152,
@@ -172,6 +203,7 @@ const seedProviderData: Array<
     phone: '+27 82 111 0010',
     rating: 4.8,
     etaMinutes: 25,
+    distanceKm: 5.4,
     hourlyRate: 680,
     availability: 'available',
     completedJobs: 173,
@@ -183,6 +215,7 @@ const seedProviderData: Array<
     phone: '+27 82 111 0011',
     rating: 4.9,
     etaMinutes: 17,
+    distanceKm: 1.6,
     hourlyRate: 490,
     availability: 'available',
     completedJobs: 201,
@@ -199,18 +232,38 @@ export const findNearbyProviders = (
   providers: Provider[],
   category: ServiceCategory,
   location: string,
-) =>
-  providers
+  options: ProviderSearchOptions = {},
+) => {
+  const { availability = 'any', minRating = 0, maxDistanceKm, sortBy = 'eta' } =
+    options
+
+  return providers
     .filter((provider) => provider.category === category)
+    .filter((provider) =>
+      availability === 'any' ? true : provider.availability === availability,
+    )
+    .filter((provider) => provider.rating >= minRating)
+    .filter((provider) =>
+      typeof maxDistanceKm === 'number'
+        ? provider.distanceKm <= maxDistanceKm
+        : true,
+    )
     .sort((left, right) => {
+      if (sortBy === 'nearest') {
+        return left.distanceKm - right.distanceKm
+      }
+
+      if (sortBy === 'rating') {
+        return right.rating - left.rating
+      }
+
       const leftLocationBoost = left.location === location ? -10 : 0
       const rightLocationBoost = right.location === location ? -10 : 0
       return (
-        left.etaMinutes +
-        leftLocationBoost -
-        (right.etaMinutes + rightLocationBoost)
+        left.etaMinutes + leftLocationBoost - (right.etaMinutes + rightLocationBoost)
       )
     })
+}
 
 const basePricing: Record<ServiceCategory, number> = {
   plumbers: 450,
@@ -248,6 +301,7 @@ export const createRequest = ({
   status: 'pending',
   scheduledFor,
   priceEstimate: basePricing[category],
+  paymentStatus: 'unpaid',
   createdAt: new Date().toISOString(),
 })
 
@@ -256,6 +310,19 @@ export const updateRequestStatus = (
   requestId: string,
   status: ServiceRequestStatus,
 ) => (request.id === requestId ? { ...request, status } : request)
+
+export const markRequestPaid = (
+  request: ServiceRequest,
+  requestId: string,
+  paymentMethod: PaymentMethod,
+) =>
+  request.id === requestId
+    ? {
+        ...request,
+        paymentStatus: 'paid',
+        paymentMethod,
+      }
+    : request
 
 export const getProviderSummary = (
   provider: Provider | undefined,

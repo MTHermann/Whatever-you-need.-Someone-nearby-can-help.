@@ -81,7 +81,7 @@
 }
 
 .mode-switch {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-bottom: 20px;
 }
 
@@ -95,7 +95,8 @@
 
 .landing-card,
 .request-list,
-.provider-grid {
+.provider-grid,
+.auth-card {
   grid-column: 1 / -1;
 }
 
@@ -104,9 +105,14 @@
 }
 
 .stack,
-.request-list {
+.request-list,
+.auth-form {
   display: grid;
   gap: 16px;
+}
+
+.auth-form {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
 .category-pills {
@@ -183,7 +189,7 @@
 .provider-card dl {
   display: grid;
   gap: 12px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   margin: 0 0 16px;
 }
 
@@ -255,7 +261,8 @@ button:hover {
     grid-template-columns: 1fr;
   }
 
-  .hero-actions {
+  .hero-actions,
+  .mode-switch {
     grid-template-columns: 1fr;
   }
 }
@@ -272,8 +279,8 @@ button:hover {
   }
 
   .provider-card dl,
-  .mode-switch,
-  .card-actions {
+  .card-actions,
+  .auth-form {
     grid-template-columns: 1fr;
   }
 

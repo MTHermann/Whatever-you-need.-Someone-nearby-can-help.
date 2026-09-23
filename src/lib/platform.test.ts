@@ -4,6 +4,7 @@ import {
   createSeedProviders,
   findNearbyProviders,
   getProviderSummary,
+  markRequestPaid,
   updateRequestStatus,
 } from './platform'
 
@@ -19,6 +20,19 @@ describe('platform helpers', () => {
     expect(results[0]?.name).toBe('Road Guard Assist')
   })
 
+  it('applies provider filters and nearest sorting', () => {
+    const providers = createSeedProviders()
+    const results = findNearbyProviders(providers, 'jump starts', 'Northside', {
+      availability: 'available',
+      maxDistanceKm: 3,
+      minRating: 4.6,
+      sortBy: 'nearest',
+    })
+
+    expect(results.length).toBe(1)
+    expect(results[0]?.name).toBe('Ignite Jump Starts')
+  })
+
   it('creates book-later requests with pending status and schedule', () => {
     const provider = createSeedProviders()[0]
     const request = createRequest({
@@ -31,7 +45,23 @@ describe('platform helpers', () => {
 
     expect(request.status).toBe('pending')
     expect(request.scheduledFor).toBe('2026-09-12T10:00')
+    expect(request.paymentStatus).toBe('unpaid')
     expect(request.providerId).toBe(provider.id)
+  })
+
+  it('marks requests as paid with method', () => {
+    const provider = createSeedProviders()[0]
+    const request = createRequest({
+      category: provider.category,
+      location: provider.location,
+      mode: 'help-now',
+      provider,
+    })
+
+    const paidRequest = markRequestPaid(request, request.id, 'wallet')
+
+    expect(paidRequest.paymentStatus).toBe('paid')
+    expect(paidRequest.paymentMethod).toBe('wallet')
   })
 
   it('tracks provider earnings from completed requests only', () => {
